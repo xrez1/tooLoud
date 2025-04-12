@@ -1,6 +1,5 @@
 import { app, BrowserWindow, ipcMain, protocol} from 'electron';
 import path from 'path';
-import fs from 'fs';
 import started from 'electron-squirrel-startup';
 import {} from './limits/limitsIpc.js';
 import {} from './sounds/soundsIpc.js';

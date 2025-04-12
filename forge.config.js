@@ -1,11 +1,25 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+const { dotenv } = require('dotenv').config();
 
 module.exports = {
   packagerConfig: {
     asar: true,
   },
   rebuildConfig: {},
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        authToken: process.env.GITHUB_TOKEN,
+        repository: {
+          owner: 'xrez1',
+          name: 'tooLoud'
+        },
+        prerelease: true
+      }
+    }
+  ],
   makers: [
     {
       name: '@electron-forge/maker-squirrel',

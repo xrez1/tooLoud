@@ -52,8 +52,22 @@ ipcMain.on('delete-sound', (event, soundFile) => {
     const soundPath = path.join(soundFolder, soundFile);
 
     try {
+        // Delete the sound file
         fs.unlinkSync(soundPath);
         console.log(`Deleted sound: ${soundFile}`);
+
+        // Update the JSON file to remove the sound
+        if (fs.existsSync(soundDataPath)) {
+            const data = fs.readFileSync(soundDataPath, 'utf-8');
+            const soundData = JSON.parse(data);
+
+            // Filter out the deleted sound
+            const updatedSoundData = soundData.filter(sound => sound.sound !== soundFile);
+
+            // Save the updated JSON data
+            fs.writeFileSync(soundDataPath, JSON.stringify(updatedSoundData, null, 2), 'utf-8');
+            console.log(`Updated sound data after deletion: ${soundFile}`);
+        }
     } catch (err) {
         console.error('Error deleting sound:', err);
     }
