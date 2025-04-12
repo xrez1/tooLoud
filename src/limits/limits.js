@@ -103,18 +103,16 @@ export function checkActiveLimits() {
     });
 }
 
-let lastSoundPlayTime = 0; // Timestamp of the last sound played
+let lastSoundPlayTime = 0;
 const soundCooldown = 2000; // Cooldown in milliseconds (e.g., 3 seconds)
 
 export function checkSoundLevelAndPlay() {
     const now = new Date();
-    const currentTime = now.toTimeString().slice(0, 5); // Get current time in "HH:MM" format
+    const currentTime = now.toTimeString().slice(0, 5);
 
-    // Get the current sound level (assumes a global or DOM element tracks this)
     const peakElement = document.getElementById("negative");
-    const currentPeak = parseFloat(peakElement.style.width); // Get the current peak level as a percentage
-
-    // Iterate over all limit boxes in the DOM
+    const currentPeak = parseFloat(peakElement.style.width); 
+    
     const limitBoxes = document.querySelectorAll(".limitBox");
     limitBoxes.forEach(limitBox => {
         const limitFrom = limitBox.querySelector(".limitFrom").value;
@@ -130,7 +128,7 @@ export function checkSoundLevelAndPlay() {
             // Check if the cooldown period has passed
             const currentTimestamp = Date.now();
             if (currentTimestamp - lastSoundPlayTime < soundCooldown) {
-                return; // Skip playing sound if still in cooldown
+                return;
             }
 
             // Get all enabled sounds
@@ -139,12 +137,11 @@ export function checkSoundLevelAndPlay() {
             if (enabledSounds.length > 0) {
                 // Play a random enabled sound
                 const randomSound = enabledSounds[Math.floor(Math.random() * enabledSounds.length)];
-                if (!randomSound) return; // Skip if no sound is found
+                if (!randomSound) return; 
                 console.log(enabledSounds, randomSound);
 
                 playSound(randomSound.sound);
 
-                // Update the last sound play time
                 lastSoundPlayTime = currentTimestamp;
             }
         }
