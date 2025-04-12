@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Too loud</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+  </head>
+    <div id="meterContainer">
+        <div id="micMeter">
+            <div id="negative"></div>
+            <div id="peak"></div>
+            <div id="absolutePeak"></div>
+        </div>
+    </div>
+    <div id="limitContainer">
+        <p>Limits /
+            <button id="limitButtons">New limit</button>
+        </p>
+    </div>
+    <div id="soundContainer">
+      <p>Sounds /
+          <button id="soundButtons">New sound</button>
+      </p>
+    </div>
+    <script type="module" src="/src/renderer.js"></script>
+  </body>
+</html>

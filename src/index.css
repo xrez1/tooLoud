@@ -1,0 +1,236 @@
+:root {
+  --main-bg: #213555;
+  --back-bg: #3E5879;
+  --accent-color: #D8C4B6;
+  --detail-color: #6e798a;
+}
+
+body {
+  background-color: var(--main-bg);
+  color: white;
+  
+  font-family: "Roboto Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+
+  margin: 0;
+  padding: 20px;
+}
+
+.activeIndicator{
+  font-size: 16px;
+}
+
+#limitContainer, #soundContainer {
+  margin: 20px;
+  padding: 10px;
+  
+  border-style: dashed;
+  border-color: var(--accent-color);
+  border-radius: 20px;
+  border-width: 2px;
+}
+
+.limitBox, #soundList{
+  margin: 20px;
+  padding: 15px;
+  padding-top: 5px;
+  
+  border-style: solid;
+  border-color: var(--accent-color);
+  border-radius: 20px;
+}
+
+#limitButtons, #soundButtons {
+  font-family: "Roboto Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  
+  background-color: var(--accent-color);
+  padding: 5px;
+
+  border-style: none;
+  border-radius: 10px;
+}
+
+#limitButtons:hover, #soundButtons:hover {
+  cursor: pointer;
+}
+
+.limitRange {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background:  #ddd;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.limitRange:hover {
+  cursor: pointer;
+}
+
+.limitRange::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.limitRange::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  background: var(--detail-color);
+  width: 18px;
+  height: 18px;
+
+  border: 3px solid var(--accent-color);
+  border-radius: 15px;
+  margin-top: -5px;
+}
+
+
+.limitName, .limitFrom, .limitTo, .limitPercentage, .deleteButton {
+  color: white;
+  
+  font-family: "Roboto Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+
+  background-color: var(--back-bg);
+  border: 0px solid white;
+  border-radius: 15px;
+
+  padding: 5px;
+  margin: 5px;
+}
+
+.deleteButton{
+  padding: 5px;
+  border-radius: 5px;
+
+  float: right;
+}
+
+.limitPercentage {
+  border-radius: 10px;
+}
+
+.limitName:focus, .limitFrom:focus, .limitTo:focus, .limitFrom:focus, .limitPercentage:focus{
+  outline: 0px solid white;
+}
+
+
+.limitName:hover, .limitFrom:hover, .limitTo:hover, .limitPercentage:hover, .deleteButton:hover, .deleteSound:hover, .playSound:hover, .soundToggle:hover {
+  cursor: pointer;
+}
+
+#meterContainer {
+  position: relative;
+}
+
+#micMeter {
+  position: relative;
+  height: 100%;
+
+  margin: 20px;
+  padding: 10px;
+  filter: brightness(75%);
+
+  background-image: linear-gradient(to right,
+  var(--back-bg) 60%,
+  var(--detail-color) 60%,
+  var(--detail-color) 80%,
+  var(--accent-color) 80%,
+  var(--accent-color) 100%
+  );
+}
+
+#negative {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  max-width: 100%;
+
+  transition: width 0.2s;
+  opacity: 0.5;
+  mix-blend-mode: lighten;
+
+  background-color: rgb(0, 255, 0);
+}
+
+#peak {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  max-width: 100%;
+
+  transition: width 0.2s;
+
+  border-right: 3px solid rgb(54, 54, 54);
+  border-radius: 2px;
+}
+
+#absolutePeak {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  max-width: 100%;
+
+  transition: width 0.2s;
+  opacity: 0.9;
+  mix-blend-mode: soft-light;
+
+  border-right: 3px solid black;
+  border-radius: 2px;
+}
+
+#soundList{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.soundBox{
+  margin: 4px;
+}
+
+.deleteSound {
+
+  color: white;
+  
+  font-family: "Roboto Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+
+  background-color: var(--back-bg);
+  border: 0px solid white;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.playSound {
+  color: white;
+  
+  font-family: "Roboto Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+
+  background-color: var(--back-bg);
+  border: 0px solid white;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+#soundList{
+  padding: 10px;
+}
