@@ -43,7 +43,14 @@ let audioWorkletNode;
 
 async function getMicrophoneStream() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            audio: {
+                autoGainControl: false,
+                noiseSuppression: false,
+                echoCancellation: false
+            }, 
+            video: false 
+        });
         console.log("Accessed microphone: ", stream);
         processAudioStream(stream); // Function to handle the audio stream
     } catch (err) {
