@@ -9,6 +9,9 @@ if (started) {
   app.quit();
 }
 
+const { updateElectronApp } = require('update-electron-app');
+updateElectronApp(); // additional configuration options available
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({

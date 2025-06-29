@@ -1,6 +1,10 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
-const { dotenv } = require('dotenv').config();
+require('dotenv').config();
+
+// Debug: Check if token is loaded
+console.log('GitHub token loaded:', process.env.GITHUB_TOKEN ? 'Yes' : 'No');
+console.log('Token length:', process.env.GITHUB_TOKEN ? process.env.GITHUB_TOKEN.length : 0);
 
 module.exports = {
   packagerConfig: {
