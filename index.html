@@ -16,16 +16,35 @@
             <div id="absolutePeak"></div>
         </div>
     </div>
+    
+    
     <div id="limitContainer">
-        <p>Limits /
-            <button id="limitButtons">New limit</button>
-        </p>
+      <p>Limits /
+        <button id="limitButtons">New limit</button>
+      </p>
     </div>
     <div id="soundContainer">
       <p>Sounds /
-          <button id="soundButtons">New sound</button>
+        <button id="soundButtons">New sound</button>
       </p>
     </div>
+
+    <div id="deviceContainer">
+        <p>Audio Devices</p>
+        <div>
+            <label for="audioInputSelect">Input Device:</label>
+            <select id="audioInputSelect">
+                <option value="">Loading...</option>
+            </select>
+        </div>
+        <div>
+            <label for="audioOutputSelect">Output Device:</label>
+            <select id="audioOutputSelect">
+                <option value="">Loading...</option>
+            </select>
+        </div>
+    </div>
+    
     <script type="module" src="/src/renderer.js"></script>
   </body>
 </html>

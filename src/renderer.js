@@ -40,17 +40,110 @@ let vuUpperRange = 0;
 let audioContext;
 let audioSource;
 let audioWorkletNode;
+let selectedInputDeviceId = null;
+let selectedOutputDeviceId = null;
+
+async function getAudioDevices() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioInputs = devices.filter(device => device.kind === 'audioinput');
+        const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
+        
+        console.log('Audio input devices:', audioInputs);
+        console.log('Audio output devices:', audioOutputs);
+        
+        populateDeviceSelectors(audioInputs, audioOutputs);
+        return { audioInputs, audioOutputs };
+    } catch (err) {
+        console.error('Error enumerating devices:', err);
+        return { audioInputs: [], audioOutputs: [] };
+    }
+}
+
+function populateDeviceSelectors(audioInputs, audioOutputs) {
+    const inputSelect = document.getElementById('audioInputSelect');
+    const outputSelect = document.getElementById('audioOutputSelect');
+    
+    if (inputSelect) {
+        inputSelect.innerHTML = '<option value="">Default Input Device</option>';
+        audioInputs.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.textContent = device.label || `Microphone ${device.deviceId.slice(0, 8)}`;
+            inputSelect.appendChild(option);
+        });
+        
+        inputSelect.addEventListener('change', (e) => {
+            selectedInputDeviceId = e.target.value || null;
+            console.log('Selected input device:', selectedInputDeviceId);
+            // Restart audio stream with new device
+            restartAudioStream();
+        });
+    }
+    
+    if (outputSelect) {
+        outputSelect.innerHTML = '<option value="">Default Output Device</option>';
+        audioOutputs.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.textContent = device.label || `Speaker ${device.deviceId.slice(0, 8)}`;
+            outputSelect.appendChild(option);
+        });
+        
+        outputSelect.addEventListener('change', (e) => {
+            selectedOutputDeviceId = e.target.value || null;
+            console.log('Selected output device:', selectedOutputDeviceId);
+            // Update audio context output if needed
+            updateAudioOutput();
+        });
+    }
+}
+
+async function restartAudioStream() {
+    if (audioContext && audioSource) {
+        // Stop current stream
+        const tracks = audioSource.mediaStream.getTracks();
+        tracks.forEach(track => track.stop());
+        
+        // Disconnect nodes
+        if (audioWorkletNode) {
+            audioWorkletNode.disconnect();
+            audioSource.disconnect();
+        }
+    }
+    
+    // Start new stream with selected device
+    await getMicrophoneStream();
+}
+
+async function updateAudioOutput() {
+    if (audioContext && selectedOutputDeviceId && audioContext.setSinkId) {
+        try {
+            await audioContext.setSinkId(selectedOutputDeviceId);
+            console.log('Audio output device changed to:', selectedOutputDeviceId);
+        } catch (err) {
+            console.error('Error changing output device:', err);
+        }
+    }
+}
 
 async function getMicrophoneStream() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
+        const constraints = { 
             audio: {
                 autoGainControl: false,
                 noiseSuppression: false,
                 echoCancellation: false
             }, 
             video: false 
-        });
+        };
+        
+        // Add device ID if one is selected
+        if (selectedInputDeviceId) {
+            constraints.audio.deviceId = { exact: selectedInputDeviceId };
+        }
+        
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         console.log("Accessed microphone: ", stream);
         processAudioStream(stream); // Function to handle the audio stream
     } catch (err) {
@@ -141,6 +234,9 @@ document.addEventListener("DOMContentLoaded", function (e) {
         newLimit();
     })
 
+    // Initialize audio devices first
+    getAudioDevices();
+    
     getMicrophoneStream();
 
     initializeLimits();

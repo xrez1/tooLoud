@@ -22,7 +22,7 @@ body {
   font-size: 16px;
 }
 
-#limitContainer, #soundContainer {
+#limitContainer, #soundContainer, #deviceContainer {
   margin: 20px;
   padding: 10px;
   
@@ -30,6 +30,32 @@ body {
   border-color: var(--accent-color);
   border-radius: 20px;
   border-width: 2px;
+}
+
+#deviceContainer div {
+  margin: 10px 0;
+}
+
+#deviceContainer label {
+  display: inline-block;
+  width: 120px;
+  font-weight: 400;
+}
+
+#audioInputSelect, #audioOutputSelect {
+  width: 250px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid var(--accent-color);
+  background-color: var(--back-bg);
+  color: white;
+  font-family: "Roboto Mono", monospace;
+}
+
+#audioInputSelect:focus, #audioOutputSelect:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px var(--accent-color);
 }
 
 .limitBox, #soundList{
