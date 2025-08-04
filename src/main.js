@@ -15,7 +15,7 @@ updateElectronApp(); // additional configuration options available
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 600,
+    width: 700,
     height: 850,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

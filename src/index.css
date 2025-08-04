@@ -54,7 +54,7 @@ body {
 
 .limitSoundSelect {
   width: 120px;
-  margin-left: 10px;
+  margin: 5px;
 }
 
 #audioInputSelect:focus, #audioOutputSelect:focus, .limitSoundSelect:focus {
