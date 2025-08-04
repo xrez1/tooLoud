@@ -3,13 +3,37 @@ import { playSound, soundData } from '../sounds/sounds.js';
 export let limitsData = []; // Global variable to store the limits
 loadLimits()
 
+function populateSoundDropdown(selectElement, selectedSound = "") {
+    // Clear existing options except "No Sound"
+    selectElement.innerHTML = '<option value="">No Sound</option>';
+    
+    // Add all available sounds
+    soundData.forEach(soundItem => {
+        const option = document.createElement('option');
+        option.value = soundItem.sound;
+        option.textContent = soundItem.sound;
+        if (soundItem.sound === selectedSound) {
+            option.selected = true;
+        }
+        selectElement.appendChild(option);
+    });
+}
+
+export function refreshAllSoundDropdowns() {
+    const soundSelects = document.querySelectorAll('.limitSoundSelect');
+    soundSelects.forEach(select => {
+        const currentValue = select.value;
+        populateSoundDropdown(select, currentValue);
+    });
+}
+
 export function initializeLimits() {
     const rangeInputArray = document.getElementsByClassName("limitRange");
     
     const limitBoxes = document.querySelectorAll(".limitBox");
     limitBoxes.forEach(box => {
         // Add event listeners for all input fields
-        const inputs = box.querySelectorAll("input");
+        const inputs = box.querySelectorAll("input, select");
         inputs.forEach(input => {
             input.addEventListener("change", function () {
                 const id = box.getAttribute("data-id");
@@ -23,6 +47,7 @@ export function initializeLimits() {
                     if (field === "limitFrom") limit.from = value;
                     if (field === "limitTo") limit.to = value;
                     if (field === "limitPercentage") limit.percentage = parseInt(value, 10);
+                    if (field === "limitSoundSelect") limit.selectedSound = value;
                 }
 
                 saveLimits();
@@ -118,6 +143,7 @@ export function checkSoundLevelAndPlay() {
         const limitFrom = limitBox.querySelector(".limitFrom").value;
         const limitTo = limitBox.querySelector(".limitTo").value;
         const limitPercentage = parseInt(limitBox.querySelector(".limitPercentage").value, 10);
+        const selectedSound = limitBox.querySelector(".limitSoundSelect").value;
 
         // Check if the time range spans across midnight
         const isActive = (limitFrom > limitTo)
@@ -131,24 +157,30 @@ export function checkSoundLevelAndPlay() {
                 return;
             }
 
-            // Get all enabled sounds
-            const enabledSounds = soundData.filter(sound => sound.enabled);
-
-            if (enabledSounds.length > 0) {
-                // Play a random enabled sound
-                const randomSound = enabledSounds[Math.floor(Math.random() * enabledSounds.length)];
-                if (!randomSound) return; 
-                console.log(enabledSounds, randomSound);
-
-                playSound(randomSound.sound);
-
+            // Play the specific sound selected for this limit, or fall back to random enabled sounds
+            if (selectedSound) {
+                console.log(`Playing selected sound for limit: ${selectedSound}`);
+                playSound(selectedSound);
                 lastSoundPlayTime = currentTimestamp;
+            } else {
+                // Fallback to original behavior: play a random enabled sound
+                const enabledSounds = soundData.filter(sound => sound.enabled);
+
+                if (enabledSounds.length > 0) {
+                    // Play a random enabled sound
+                    const randomSound = enabledSounds[Math.floor(Math.random() * enabledSounds.length)];
+                    if (!randomSound) return; 
+                    console.log(enabledSounds, randomSound);
+
+                    playSound(randomSound.sound);
+                    lastSoundPlayTime = currentTimestamp;
+                }
             }
         }
     });
 }
 
-export function newLimit(id = Date.now(), name = "New limit!", from = "00:00", to = "00:00", percentage = 50) {
+export function newLimit(id = Date.now(), name = "New limit!", from = "00:00", to = "00:00", percentage = 50, selectedSound = "") {
     const container = document.getElementById("limitContainer")
 
     const template = `
@@ -158,6 +190,9 @@ export function newLimit(id = Date.now(), name = "New limit!", from = "00:00", t
                 <input type="time" class="limitFrom" value="${from}"></input>
                 <input type="time" class="limitTo" value="${to}"></input>
                 <input type="number" class="limitPercentage" min="0" max="100" value="${percentage}"></input>
+                <select class="limitSoundSelect">
+                    <option value="">No Sound</option>
+                </select>
                 <span class="activeIndicator" style="display: none; color: red;">●</span>
                 <button class="deleteButton">✕</button>
                 <input type="range" class="limitRange" min="0" max="100" value="${percentage}">
@@ -166,7 +201,12 @@ export function newLimit(id = Date.now(), name = "New limit!", from = "00:00", t
     `
 
     container.insertAdjacentHTML("beforeend", template)
-    limitsData.push({ id, name, from, to, percentage });
+    
+    // Populate the sound dropdown for this limit
+    const limitBox = container.querySelector(`[data-id="${id}"]`);
+    populateSoundDropdown(limitBox.querySelector('.limitSoundSelect'), selectedSound);
+    
+    limitsData.push({ id, name, from, to, percentage, selectedSound });
 
     initializeLimits();
 }
@@ -181,8 +221,9 @@ export async function saveLimits() {
         const from = box.querySelector(".limitFrom").value;
         const to = box.querySelector(".limitTo").value;
         const percentage = parseInt(box.querySelector(".limitPercentage").value, 10);
+        const selectedSound = box.querySelector(".limitSoundSelect").value;
 
-        limits.push({ id, name, from, to, percentage });
+        limits.push({ id, name, from, to, percentage, selectedSound });
     });
 
     // Send the limits data to the main process
@@ -199,7 +240,7 @@ export async function loadLimits() {
         window.electron.ipcRenderer.invoke('load-limits').then((limits) => {
             if (Array.isArray(limits)) {
                 limits.forEach(limit => {
-                    newLimit(limit.id, limit.name, limit.from, limit.to, limit.percentage);
+                    newLimit(limit.id, limit.name, limit.from, limit.to, limit.percentage, limit.selectedSound || "");
                 });
             } else {
                 console.error("Invalid limits data received:", limits);

@@ -1,3 +1,5 @@
+import { refreshAllSoundDropdowns } from '../limits/limits.js';
+
 export let soundData = [];
 loadSounds();
 
@@ -13,6 +15,9 @@ export async function loadSounds() {
         sounds.forEach(sound => {
             newSound(sound, soundData.find(s => s.sound === sound)?.enabled || false);
         });
+        
+        // Refresh limit sound dropdowns after sounds are loaded
+        refreshAllSoundDropdowns();
     } else {
         console.error('Electron ipcRenderer is not available.');
     }
@@ -30,6 +35,8 @@ export function initializeSoundEvents() {
     document.getElementById('soundButtons').addEventListener('click', function () {
         window.electron.ipcRenderer.invoke('add-new-sound').then((e) => {
             newSound(e, false);
+            // Refresh limit sound dropdowns after a new sound is added
+            refreshAllSoundDropdowns();
         })
     });
 
@@ -44,7 +51,17 @@ export function initializeSoundEvents() {
         button.addEventListener('click', function () {
             const soundFile = this.parentElement.parentElement.getAttribute('data-sound');
             window.electron.ipcRenderer.send('delete-sound', soundFile);
+            
+            // Remove from soundData array
+            const index = soundData.findIndex(s => s.sound === soundFile);
+            if (index > -1) {
+                soundData.splice(index, 1);
+                saveSounds();
+            }
+            
             this.parentElement.parentElement.parentElement.remove();
+            // Refresh limit sound dropdowns after a sound is deleted
+            refreshAllSoundDropdowns();
         });
     });
 
